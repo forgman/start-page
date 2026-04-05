@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="transition-none" style="color-scheme: light dark;">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    
+    <title>KAI.WORK | Research Console</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-screen-webfont@1.1.0/style.css" />
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: { 
+                extend: { 
+                    colors: { 
+                        paper: '#f9f4dc', 
+                        ink: '#1A1A1A', 
+                        mutedBlue: '#93B5D9', 
+                        deepBlue: '#5A7A99',
+                        darkBase: '#131314',
+                        darkSurface: '#1E1F20',
+                        slate: {
+                            50: '#F5F5F2', 100: '#EBE9E4', 200: '#C8C6BC', 300: '#A8A69E', 
+                            400: '#78766E', 500: '#68665E', 600: '#58564F', 700: '#424038', 
+                            800: '#2C2B26', 900: '#181715',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['"LXGW WenKai Screen"', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'] 
+                    },
+                    borderWidth: {
+                        DEFAULT: '1px',
+                        '0': '0',
+                        '2': '2px',
+                        '4': '4px',
+                        '8': '8px',
+                    }
+                } 
+            }
+        }
+        const applyInitTheme = () => {
+            const saved = localStorage.getItem('theme') || 'system';
+            const html = document.documentElement;
+            let isDark = saved === 'dark' || (saved === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+            html.classList.toggle('dark', isDark);
+        };
+        applyInitTheme();
+    </script>
+    <link rel="stylesheet" href="assets/style.css?v=8.9.30">
+    <style>
+        .skeleton {
+            background: rgba(0,0,0,0.06);
+            border-radius: 8px;
+            animation: pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        .dark .skeleton { background: rgba(255,255,255,0.08); }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .5; } }
+    </style>
+</head>
+<body class="flex transition-colors duration-500 overflow-hidden font-sans dark:bg-darkBase">
+
+    <aside class="w-64 h-screen bg-white/60 dark:bg-darkSurface/60 backdrop-blur-xl border-r dark:border-r-2 border-slate-200/50 dark:border-white/5 flex flex-col p-6 fixed z-20">
+        <div class="mb-6 flex flex-col items-center w-full">
+            <div class="relative mb-6 group">
+                <a href="https://qinkai.wang" target="_blank" class="block cursor-pointer" title="访问个人博客">
+                    <img id="user-avatar" src="https://hz.torimg.com/20251009/09ae71f81696246d8e4c66b9bc486be4.jpg" class="w-16 h-16 rounded-2xl shadow-md border-2 border-white dark:border-white/10 object-cover hover:scale-105 transition-transform duration-500">
+                </a>
+            </div>
+            <div class="text-center px-2">
+                <p id="user-slogan" class="slogan-text text-[15px] text-slate-600 dark:text-slate-300 leading-loose tracking-wide">挥剑破云迎星落<br>举酒高歌引凤游</p>
+            </div>
+        </div>
+        
+        <nav id="sidebar-nav" class="flex-grow space-y-3 no-scrollbar overflow-y-auto pt-2">
+            <div class="skeleton h-10 w-full"></div>
+            <div class="skeleton h-10 w-full"></div>
+            <div class="skeleton h-10 w-full"></div>
+        </nav>
+
+        <div id="add-cat-btn-container" class="hidden mb-4 px-2">
+            <button onclick="window.openAddCatModal()" class="w-full py-2.5 rounded-xl border-2 border-dashed border-slate-300/50 dark:border-white/5 text-sm font-semibold text-slate-600 dark:text-slate-300 hover:border-mutedBlue hover:text-mutedBlue transition-all">+ 新增分类</button>
+        </div>
+        <div class="pt-4 mt-auto border-t dark:border-t-2 border-slate-200/30 dark:border-white/5">
+            <div class="mb-3 p-1 bg-slate-200/30 dark:bg-white/5 rounded-xl flex gap-1 border border-slate-200/50 dark:border-white/5">
+                <button onclick="window.applyTheme('light')" id="theme-light" class="theme-btn flex-grow py-2 rounded-lg transition-all flex items-center justify-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+                    <svg class="w-4 h-4" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
+                        <path d="M298.7 676.2l-52.3 52.3c-9.6 9.6-9.6 25.3 0 34.9 9.6 9.6 25.3 9.6 34.9 0l52.3-52.3c9.6-9.6 9.6-25.3 0-34.9-9.6-9.6-25.3-9.6-34.9 0z m-15-372.7c9.7 9.7 25.5 9.7 35.2 0 9.7-9.7 9.7-25.5 0-35.2l-52.8-52.8c-9.7-9.7-25.5-9.7-35.2 0-9.7 9.7-9.7 25.5 0-35.2l52.8 52.8z m-69.9 168.8h-74.7c-13.8 0-24.9 11.1-24.9 24.9 0 13.8 11.2 24.9 24.9 24.9h74.7c13.8 0 24.9-11.1 24.9-24.9 0-13.7-11.2-24.9-24.9-24.9z m298.8-249c13.8 0 24.9-11.1 24.9-24.9v-74.7c0-13.8-11.1-24.9-24.9-24.9s-24.9 11.1-24.9 24.9v74.7c0 13.8 11.2 24.9 24.9 24.9z m239.6 69.2l52.3-52.3c9.6-9.6 9.6-25.3 0-34.9-9.6-9.6-25.3-9.6-34.9 0l-52.3 52.3c-9.6 9.6-9.6 25.3 0 34.9 9.6 9.7 25.3 9.7 34.9 0z m133.9 179.8h-74.7c-13.8 0-24.9 11.1-24.9 24.9 0 13.8 11.1 24.9 24.9 24.9h74.7c13.8 0 24.9-11.1 24.9-24.9 0-13.7-11.1-24.9-24.9-24.9zM741.5 690.9c-9.7-9.7-25.5-9.7-35.2 0-9.7 9.7-9.7 25.5 0 35.2l52.8 52.8c9.7 9.7 25.5 9.7 35.2 0 9.7-9.7 9.7-25.5 0-35.2l-52.8-52.8zM512.6 273c-123.9 0-224.3 100.4-224.3 224.3s100.4 224.3 224.3 224.3 224.3-100.4 224.3-224.3S636.5 273 512.6 273z m0 498.1c-13.8 0-24.9 11.1-24.9 24.9v74.7c0 13.8 11.1 24.9 24.9s24.9-11.1 24.9-24.9V796c0-13.7-11.1-24.9-24.9-24.9z"></path>
+                    </svg>
+                </button>
+                <button onclick="window.applyTheme('dark')" id="theme-dark" class="theme-btn flex-grow py-2 rounded-lg transition-all flex items-center justify-center text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-200">
+                    <svg class="w-[11.5px] h-[11.5px]" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
+                        <path d="M533.997 64.536C617.645 125.651 672 224.47 672 336c0 185.568-150.432 336-336 336-111.53 0-210.349-54.355-271.464-138.003C76.006 771.202 271.952 960 512 960c247.424 0 448-200.576 448-448 0-240.048-188.798-435.994-426.003-447.464zM288 224c17.6 0 32-14.4 32-32s-14.4-32-32-32h-64V96c0-17.6-14.4-32-32-32s-32 14.4-32 32v64H96c-17.6 0-32 14.4-32 32s14.4 32 32 32h64v64c0 17.6 14.4 32 32 32s32-14.4 32-32v-64h64z"></path>
+                        <path d="M416 416h-32v-32c0-17.6-14.4-32-32-32s-32 14.4-32 32v32h-32c-17.6 0-32 14.4-32 32s14.4 32 32 32h32v32c0 17.6 14.4 32 32 32s32-14.4 32-32v-32h32c17.6 0 32-14.4 32-32s-14.4-32-32-32z"></path>
+                    </svg>
+                </button>
+                <button onclick="window.applyTheme('system')" id="theme-system" class="theme-btn flex-grow py-2 rounded-lg transition-all hover:bg-white dark:hover:bg-white/10 text-[10px] font-bold text-slate-600 dark:text-slate-300">Auto</button>
+            </div>
+            <div class="flex gap-2">
+                <button onclick="window.openProfileModal()" class="flex-grow p-1 bg-slate-200/30 dark:bg-white/5 rounded-xl border border-slate-200/50 dark:border-white/5 flex transition-all hover:border-mutedBlue group active:scale-[0.98]">
+                    <div id="current-user-name" class="flex-grow py-2 rounded-lg transition-all flex items-center justify-center text-xs font-bold text-slate-600 dark:text-slate-300 group-hover:text-mutedBlue">Loading...</div>
+                </button>
+                <button onclick="window.logout()" id="logout-btn" class="hidden w-10 p-1 bg-slate-200/30 hover:bg-red-50 dark:bg-white/5 rounded-xl border border-slate-200/50 dark:border-white/5 flex items-center justify-center transition-all hover:border-red-400 hover:text-red-500 text-slate-400" title="注销">
+                    <svg class="w-4 h-4" viewBox="0 0 1024 1024" fill="currentColor" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M973.76 450.56l-207.84-227.52c-42.24-46.08-119.04-17.28-120.48 45.12l-2.4 121.44H478.88c-24.96 0-45.12 20.16-45.12 45.12V564.8c0 24.96 20.16 45.12 45.12 45.12h158.88l-1.92 98.88c-1.44 61.92 73.44 94.56 118.08 51.36l217.44-212.64c26.4-26.4 27.84-69.12 2.4-96.96z"></path>
+                        <path d="M497.12 838.4H215.36c-24 0-44.64-20.64-44.64-44.64V235.04c0-24 20.64-44.64 44.64-44.64h281.28c36.48 0 65.76-29.28 65.76-65.76S533.12 58.88 497.12 58.88H215.36C118.4 58.88 39.68 138.08 39.68 235.04v558.72c0 96.96 79.2 176.16 176.16 176.16h281.28c36.48 0 65.76-29.28 65.76-65.76S533.12 838.4 497.12 838.4z"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </aside>
+
+    <div id="content-container" class="ml-64 flex-grow h-screen flex flex-col relative">
+        <div class="absolute top-0 left-0 right-0 z-50 px-12 pt-12 pb-24 pointer-events-none">
+            <div class="absolute inset-0 bg-gradient-to-b from-paper via-paper/95 to-transparent dark:from-darkBase dark:via-darkBase/95"></div>
+            
+            <header class="max-w-5xl mx-auto relative pointer-events-auto">
+                <div class="bg-white/60 dark:bg-darkSurface/60 rounded-2xl shadow-sm border dark:border-2 border-slate-200/50 dark:border-white/5 p-1 flex items-center relative backdrop-blur-md">
+                    <div class="relative">
+                        <button id="engine-btn" onclick="window.toggleEngineMenu(event)" class="px-5 py-3 text-xs font-bold border-r dark:border-r-2 border-slate-200/50 dark:border-white/5 text-slate-600 dark:text-slate-300 flex items-center gap-3 hover:text-mutedBlue transition-colors">
+                            <div id="current-engine-icon" class="w-4 h-4 flex items-center"></div>
+                            <span id="current-engine-text">Google</span>
+                        </button>
+                        <div id="engine-menu" class="hidden absolute top-full left-0 mt-3 w-48 rounded-2xl dropdown-menu z-[150] overflow-hidden">
+                            <div class="p-1.5" id="engine-list-content"></div>
+                        </div>
+                    </div>
+                    <input type="text" id="search-input" placeholder="你要搜索什么？" autocomplete="off" class="flex-grow px-6 outline-none text-[15px] font-semibold bg-transparent text-slate-600 dark:text-slate-300 placeholder:text-slate-600 dark:placeholder:text-slate-300 dark:placeholder:opacity-50">
+                    <button onclick="window.executeSearch()" class="p-4 text-slate-700 dark:text-slate-300 hover:text-mutedBlue transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" /></svg>
+                    </button>
+                </div>
+            </header>
+        </div>
+
+        <main id="main-scroll-area" class="flex-grow overflow-y-auto px-12 pb-12 pt-48 transition-all">
+            <div id="main-content" class="mx-auto transition-none">
+                <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10">
+                    <div class="rounded-[2rem] p-9 border dark:border-2 border-slate-200/50 bg-white/40 h-96 skeleton"></div>
+                    <div class="rounded-[2rem] p-9 border dark:border-2 border-slate-200/50 bg-white/40 h-96 skeleton"></div>
+                </div>
+            </div>
+        </main>
+        
+        <div id="management-bar" class="hidden absolute bottom-0 left-0 right-0 z-[60] transform translate-y-full transition-transform duration-500 ease-in-out">
+            <div class="bg-white/80 dark:bg-darkSurface/80 backdrop-blur-3xl border-t dark:border-t-2 border-slate-200/50 dark:border-white/5 px-12 py-6 flex items-center justify-between">
+                <div class="flex items-center gap-4">
+                    <span class="flex h-2 w-2 rounded-full bg-mutedBlue animate-pulse"></span>
+                    <span class="text-[11px] font-bold text-slate-600 dark:text-slate-300 tracking-wider leading-none">Powered by Qinkai.Wang V8.9.30</span>
+                </div>
+                <div class="flex gap-4">
+                    <button onclick="window.toggleEditMode(false)" class="px-8 py-2.5 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-100 dark:hover:bg-white/5 dark:text-slate-300 transition-colors">退出编辑</button>
+                    <button onclick="window.saveChanges()" id="save-btn" class="bg-mutedBlue dark:bg-deepBlue text-white dark:text-slate-200 px-12 py-2.5 rounded-xl text-xs font-bold shadow-xl shadow-mutedBlue/20 dark:shadow-deepBlue/20 hover:scale-105 transition-all">保存归档</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="auth-overlay" class="fixed inset-0 z-[200] flex items-center justify-center bg-slate-900/50 backdrop-blur-md hidden transition-all duration-300">
+        <div class="bg-white/95 dark:bg-darkSurface/95 backdrop-blur-2xl rounded-3xl p-8 border-2 border-slate-200/50 dark:border-white/5 shadow-2xl w-full max-w-sm animate-fade-in-up">
+            <div class="text-center mb-8">
+                <h3 class="text-xl font-black uppercase tracking-widest text-slate-800 dark:text-slate-200 mb-2">KAI.WORK</h3>
+                <p class="text-xs text-slate-500 dark:text-slate-400">Research Console Access</p>
+            </div>
+            <div class="space-y-4">
+                <div>
+                    <input type="text" id="auth-user" placeholder="用户名" class="w-full px-5 py-3 rounded-xl bg-slate-100 dark:bg-darkBase border border-slate-200/50 dark:border-white/5 outline-none focus:border-mutedBlue dark:focus:border-deepBlue transition-all text-sm font-bold text-slate-700 dark:text-slate-300">
+                </div>
+                <div>
+                    <input type="password" id="auth-pass" placeholder="访问密码" class="w-full px-5 py-3 rounded-xl bg-slate-100 dark:bg-darkBase border border-slate-200/50 dark:border-white/5 outline-none focus:border-mutedBlue dark:focus:border-deepBlue transition-all text-sm font-bold text-slate-700 dark:text-slate-300">
+                </div>
+                <div class="flex items-center justify-between px-1">
+                    <label class="flex items-center gap-2 cursor-pointer group">
+                        <input type="checkbox" id="auth-safe" class="w-4 h-4 rounded border-slate-300 text-mutedBlue focus:ring-mutedBlue">
+                        <span class="text-xs font-bold text-slate-500 group-hover:text-mutedBlue transition-colors">安全登录 (30天)</span>
+                    </label>
+                    <button onclick="window.switchAuthMode()" id="auth-switch-btn" class="text-xs font-bold text-slate-400 hover:text-mutedBlue transition-colors">注册新账号</button>
+                </div>
+            </div>
+            <div class="mt-8">
+                <button onclick="window.submitAuth()" id="auth-submit-btn" class="w-full py-3.5 rounded-xl font-bold text-sm bg-mutedBlue dark:bg-deepBlue hover:brightness-110 text-white shadow-lg shadow-mutedBlue/20 transition-all">立即进入</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-overlay" class="hidden fixed inset-0 z-[200] flex items-center justify-center bg-slate-900/20 backdrop-blur-sm transition-all duration-300">
+        <div id="modal-container" class="w-full max-w-4xl scale-95 transition-transform duration-300"></div>
+    </div>
+    <script src="assets/app.js?v=8.9.30"></script>
+</body>
+</html>
